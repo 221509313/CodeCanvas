@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCanvas | Interactive Code Playground</title>
+    <style>
+        /* ===== Global Styles ===== */
+        :root {
+            --primary: #6e48aa;
+            --secondary: #2a2d3e;
+            --accent: #ff7e5f;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --editor-bg: #1e1e2d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== Header ===== */
+        header {
+            background-color: var(--dark);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .run-btn {
+            background-color: var(--accent);
+            color: var(--light);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .run-btn:hover {
+            background-color: #ff6b4d;
+            transform: translateY(-2px);
+        }
+
+        /* ===== Editor Layout ===== */
+        .playground {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: 70vh;
+            margin: 25px 0;
+        }
+
+        @media (max-width: 768px) {
+            .playground {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--editor-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .editor-header {
+            background-color: var(--dark);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .editor {
+            flex: 1;
+            padding: 15px;
+            background-color: var(--editor-bg);
+            color: #abb2bf;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            border: none;
+            outline: none;
+            tab-size: 2;
+        }
+
+        /* ===== Preview Pane ===== */
+        .preview-container {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-header {
+            background-color: var(--dark);
+            padding: 10px 15px;
+            color: var(--light);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        #preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white;
+        }
+
+        /* ===== Features Section ===== */
+        .features {
+            padding: 50px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--dark);
+            padding: 25px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 30px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            background-color: var(--dark);
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: #adb5bd;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Code<span>Canvas</span></div>
+                <button class="run-btn" id="run-code">Run Code ▶</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Code Playground -->
+        <section class="playground">
+            <!-- HTML Editor -->
+            <div class="editor-container">
+                <div class="editor-header">
+                    <span class="editor-title">HTML</span>
+                </div>
+                <textarea id="html-editor" class="editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+    <title>My Playground</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 {
+            color: #6e48aa;
+        }
+        button {
+            background: #6e48aa;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Hello, CodeCanvas!</h1>
+        <p>Edit this code and click "Run" to see changes.</p>
+        <button id="demo-btn">Click Me</button>
+    </div>
+</body>
+</html></textarea>
+            </div>
+
+            <!-- CSS Editor -->
+            <div class="editor-container">
+                <div class="editor-header">
+                    <span class="editor-title">CSS</span>
+                </div>
+                <textarea id="css-editor" class="editor" spellcheck="false">/* Add your CSS here */
+#demo-btn:hover {
+    background: #ff7e5f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}</textarea>
+            </div>
+
+            <!-- JavaScript Editor -->
+            <div class="editor-container">
+                <div class="editor-header">
+                    <span class="editor-title">JavaScript</span>
+                </div>
+                <textarea id="js-editor" class="editor" spellcheck="false">// Add your JavaScript here
+document.getElementById('demo-btn').addEventListener('click', () => {
+    alert('Button clicked! Try changing this message.');
+});</textarea>
+            </div>
+
+            <!-- Preview Pane -->
+            <div class="preview-container">
+                <div class="preview-header">Preview</div>
+                <iframe id="preview-frame"></iframe>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <h2>Why Use CodeCanvas?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Preview</h3>
+                    <p>See changes instantly as you code without refreshing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Three-pane Editor</h3>
+                    <p>Separate HTML, CSS, and JS editors for organized coding.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive Design</h3>
+                    <p>Works perfectly on desktop and mobile devices.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">Documentation</a>
+                <a href="#">About</a>
+            </div>
+            <p class="copyright">© 2024 CodeCanvas. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Run Code Functionality
+        document.getElementById('run-code').addEventListener('click', updatePreview);
+
+        function updatePreview() {
+            const html = document.getElementById('html-editor').value;
+            const css = document.getElementById('css-editor').value;
+            const js = document.getElementById('js-editor').value;
+
+            const frame = document.getElementById('preview-frame');
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+
+            frameDoc.open();
+            frameDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>${css}</style>
+                </head>
+                ${html}
+                <script>${js}<\/script>
+                </html>
+            `);
+            frameDoc.close();
+        }
+
+        // Initialize with default preview
+        window.onload = updatePreview;
+
+        // Auto-resize editors
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        document.querySelectorAll('.editor').forEach(editor => {
+            autoResize(editor);
+            editor.addEventListener('input', function () {
+                autoResize(this);
+            });
+        });
+    </script>
+</body>
+
+</html>
